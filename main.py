@@ -1,40 +1,90 @@
 import json
-from pyscript import display, document, window
+from pyscript import document, window
 
 class Classmate:
-    def __init__(self, name, section, miss):
+    def __init__(self, name, section, favorite_subject, miss):
         self.name = name
         self.section = section
+        self.favorite_subject = favorite_subject
         self.miss = miss
-    
-    def introduce(self):
-        return f"Hi! I am {self.name} from {self.section}. And I miss {self.miss}."
 
-def load_classmates():
+    def introduce(self):
+        return f"Hi! I am {self.name} from {self.section}. My favorite subject is {self.favorite_subject}, and I miss {self.miss}."
+
+
+default_classmates = [
+    Classmate("Audrey", "Topaz", "English", "my classmates"),
+    Classmate("Philia", "Amethyst", "Science", "school activities"),
+    Classmate("Miguel", "Emerald", "Mathematics", "him"),
+    Classmate("Boreas", "Sapphire", "Filipino", "group work"),
+    Classmate("Nathan", "Ruby", "ICT", "my turtle")
+]
+
+
+def load_added_classmates():
     stored = window.localStorage.getItem("classmates")
+
     if stored:
         data = json.loads(stored)
-        return [Classmate(c["name"], c["section"], c["miss"]) for c in data]
+        return [
+            Classmate(
+                c["name"],
+                c["section"],
+                c["favorite_subject"],
+                c["miss"]
+            )
+            for c in data
+        ]
+
     return []
 
-classmates = load_classmates()
+
+added_classmates = load_added_classmates()
+classmates = default_classmates + added_classmates
+
+
+def save_added_classmates():
+    data = [
+        {
+            "name": c.name,
+            "section": c.section,
+            "favorite_subject": c.favorite_subject,
+            "miss": c.miss
+        }
+        for c in added_classmates
+    ]
+
+    window.localStorage.setItem("classmates", json.dumps(data))
+
 
 def add_classmate(_e=None):
     name = document.getElementById("classmate1").value
     section = document.getElementById("section").value
+    favorite_subject = document.getElementById("favorite_subject").value
     miss = document.getElementById("miss").value
 
-    new_student = Classmate(name, section, miss)
+    if name == "" or section == "" or favorite_subject == "" or miss == "":
+        document.getElementById("output").innerHTML = "<p class='text-danger'>Please fill out all fields.</p>"
+        return
+
+    new_student = Classmate(name, section, favorite_subject, miss)
+
+    added_classmates.append(new_student)
     classmates.append(new_student)
 
-    data = [{"name": c.name, "section": c.section, "miss": c.miss} for c in classmates]
-    window.localStorage.setItem("classmates", json.dumps(data))
+    save_added_classmates()
 
-    display(f"{name} added successfully!\n", append=True, target="output")
+    document.getElementById("classmate1").value = ""
+    document.getElementById("section").value = ""
+    document.getElementById("favorite_subject").value = ""
+    document.getElementById("miss").value = ""
+
+    document.getElementById("output").innerHTML = f"<p class='text-success'>{name} was added successfully!</p>"
+
 
 def show_classmates(_e=None):
-    document.getElementById('output').innerHTML = ""
-    
+    output = document.getElementById("output")
+    output.innerHTML = ""
+
     for student in classmates:
-        intro = student.introduce()
-        display(intro + "\n", append=True, target='output')
+        output.innerHTML += f"<p>{student.introduce()}</p>"
