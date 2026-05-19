@@ -11,7 +11,6 @@ class Classmate:
     def introduce(self):
         return f"Hi! I am {self.name} from {self.section}. My favorite subject is {self.favorite_subject}, and I miss {self.miss}."
 
-
 default_classmates = [
     Classmate("Audrey", "Topaz", "English", "my classmates"),
     Classmate("Philia", "Amethyst", "Science", "school activities"),
@@ -20,25 +19,14 @@ default_classmates = [
     Classmate("Nathan", "Ruby", "ICT", "my turtle")
 ]
 
-
 def load_added_classmates():
     stored = window.localStorage.getItem("classmates")
 
     if stored:
         data = json.loads(stored)
-        return [
-            Classmate(
-                c["name"],
-                c["section"],
-                c["favorite_subject"],
-                c["miss"]
-            )
-            for c in data
-        ]
-
+        return [ Classmate(c["name"], c["section"], c["favorite_subject"], c["miss"]) for c in data]
     return []
-
-
+      
 added_classmates = load_added_classmates()
 classmates = default_classmates + added_classmates
 
