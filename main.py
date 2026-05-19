@@ -1,6 +1,11 @@
 import json
 from pyscript import document, window
 
+import json
+from pyscript import document, window
+
+window.localStorage.removeItem("classmates")
+
 class Classmate:
     def __init__(self, name, section, favorite_subject, miss):
         self.name = name
