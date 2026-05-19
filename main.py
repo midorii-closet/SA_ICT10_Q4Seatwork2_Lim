@@ -31,20 +31,6 @@ added_classmates = load_added_classmates()
 classmates = default_classmates + added_classmates
 
 
-def save_added_classmates():
-    data = [
-        {
-            "name": c.name,
-            "section": c.section,
-            "favorite_subject": c.favorite_subject,
-            "miss": c.miss
-        }
-        for c in added_classmates
-    ]
-
-    window.localStorage.setItem("classmates", json.dumps(data))
-
-
 def add_classmate(_e=None):
     name = document.getElementById("classmate1").value
     section = document.getElementById("section").value
